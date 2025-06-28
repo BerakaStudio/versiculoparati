@@ -36,4 +36,4 @@ Este proyecto está bajo la Licencia MIT - mira el archivo [LICENSE](LICENSE) pa
 
 Beraka Studio - [Sitio web](https://beraka.cl)
 
-Enlace del Proyecto: [https://github.com/tu-usuario/versiculo-para-ti](https://github.com/tu-usuario/versiculo-para-ti)
+Enlace del Proyecto: [https://github.com/BerakaStudio/versiculoparati](https://github.com/BerakaStudio/versiculoparati)
