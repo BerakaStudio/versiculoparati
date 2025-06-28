@@ -25,11 +25,7 @@ header {
 }
 
 header img {
-    width: 15%;
-}
-
-header div {
-    justify-items: flex-start;
+    width: auto;
 }
 
 header div p {
