@@ -27,6 +27,11 @@ header {
 header img {
     width: 70%;
 }
+@media (min-width: 280px) and (max-width: 500px) {
+    header img {
+        width: 90%;
+    }
+}
 
 header .titulo {
     display: none;
