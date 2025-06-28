@@ -1,21 +1,39 @@
 # Versículo para Tí
 
-"Versículo para Tí" es una aplicación web que ofrece consuelo y guía bíblica a los usuarios. La app analiza los sentimientos expresados por el usuario y le presenta 5 versículos de la Biblia (versión TLA) acompañados de mensajes reflexivos para brindarle paz y esperanza.
+Una aplicación web que proporciona versículos bíblicos personalizados basados en tus sentimientos y emociones del momento.
 
-## Características
+## 🌟 Características
 
-- Interfaz limpia, tranquila y fácil de usar.
-- Análisis de sentimientos del usuario para encontrar versículos relevantes.
-- Generación de reflexiones personalizadas para cada versículo.
-- Animación de carga para una experiencia más agradable.
+- Interfaz intuitiva y amigable
+- Respuestas personalizadas usando IA (Google Gemini)
+- Versículos de la Traducción en Lenguaje Actual (TLA)
+- Reflexiones empáticas y consoladoras
+- Diseño responsive y moderno
 
-## ¿Cómo usarlo?
+## 🚀 Demo en Vivo
 
-Simplemente descarga o clona este repositorio y abre el archivo `index.html` en tu navegador web.
+Visita la aplicación: [Versículo para tí](https://versiculoparati.vercel.app/)
 
-## Tecnologías Utilizadas
+## 🛠️ Tecnologías Utilizadas
 
-- HTML5
-- CSS3 (con Tailwind CSS)
-- JavaScript
-- Google Gemini API para el procesamiento de lenguaje natural.
+- **Frontend**: HTML, CSS, JavaScript
+- **Styling**: Tailwind CSS
+- **Backend**: Vercel Serverless Functions
+- **IA**: Google Gemini API
+- **Hosting**: Vercel
+
+## 🔐 Seguridad
+
+- La clave de API se mantiene segura en variables de entorno del servidor
+- No se exponen credenciales en el código frontend
+- Las llamadas a la API se procesan en el backend
+
+## 📝 Licencia
+
+Este proyecto está bajo la Licencia MIT - mira el archivo [LICENSE](LICENSE) para más detalles.
+
+## 📞 Contacto
+
+Beraka Studio - [Sitio web](https://beraka.cl)
+
+Enlace del Proyecto: [https://github.com/tu-usuario/versiculo-para-ti](https://github.com/tu-usuario/versiculo-para-ti)
