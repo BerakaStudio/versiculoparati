@@ -16,6 +16,26 @@ body {
     justify-content: space-between;
 }
 
+header {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+header img {
+    width: 15%;
+}
+
+header div {
+    justify-items: flex-start;
+}
+
+header div p {
+    font-size: 1.09rem;
+}
+
 .btn-gradient {
     background-image: linear-gradient(to right, #22c55e, #16a34a, #15803d);
 }
