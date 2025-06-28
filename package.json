@@ -1,0 +1,15 @@
+{
+  "name": "versiculo-para-ti",
+  "version": "1.0.0",
+  "description": "App web para encontrar versículos bíblicos según tus sentimientos",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build needed for static files'"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": "18.x"
+  }
+}
