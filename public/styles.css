@@ -28,8 +28,20 @@ header img {
     width: auto;
 }
 
-header div p {
+header div h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2d5a2d;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    letter-spacing: -1px;
+}
+
+header p {
+    color: #5a7c5a;
+    font-weight: 400;
     font-size: 1.09rem;
+    letter-spacing: -0.5px;
 }
 
 .btn-gradient {
@@ -128,19 +140,6 @@ header div p {
     line-height: 1.5;
     border-top: 1px solid #e5e7eb;
     padding-top: 0.75rem;
-}
-
-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #2d5a2d;
-    margin-bottom: 0.5rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-header p {
-    font-size: 1.1rem;
-    color: #5a7c5a;
-    font-weight: 400;
 }
 
 /* Sparkle loading animation */
