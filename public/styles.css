@@ -140,8 +140,8 @@ header p {
 }
 
 .verses-title {
-    font-size: 1.15rem;
-    font-weight: 600;
+    font-size: 1.2rem;
+    font-weight: 700;
     color: #2d5a2d;
     margin-bottom: 0rem;
     display: block;
@@ -161,7 +161,7 @@ header p {
 }
 .verse > div {
     background: white;
-    border-radius: 16px;
+    border-radius: 14px;
     padding: 1.5rem;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
     border: 1px solid #a6dbb8;
