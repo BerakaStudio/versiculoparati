@@ -23,12 +23,17 @@ header {
     align-items: center;
     gap: 1rem;
 }
+header a {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+}
 
-header img {
+header a img {
     width: 70%;
 }
 @media (min-width: 280px) and (max-width: 500px) {
-    header img {
+    header a img {
         width: 90%;
     }
 }
