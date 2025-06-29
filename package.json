@@ -1,6 +1,6 @@
 {
   "name": "versiculo-para-ti",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "App web para encontrar versículos bíblicos según tus sentimientos",
   "main": "index.js",
   "scripts": {
