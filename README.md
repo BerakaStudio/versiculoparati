@@ -1,5 +1,5 @@
 # Versículo para Tí
-![Version](https://img.shields.io/badge/version-1.0.-green.svg?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.0-green.svg?style=flat-square)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 
 Una aplicación web que proporciona versículos bíblicos personalizados basados en tus sentimientos y emociones del momento.
