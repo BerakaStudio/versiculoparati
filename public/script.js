@@ -63,6 +63,38 @@ function resetUI() {
     versesContainer.innerHTML = '';
 }
 
+function isValidTextInput(text) {
+    // Eliminar espacios en blanco
+    const trimmedText = text.trim();
+    
+    // Verificar longitud mínima
+    if (trimmedText.length < 3) {
+        return { valid: false, message: "Por favor, escribe al menos algunas palabras sobre cómo te sientes." };
+    }
+    
+    // Verificar que contenga principalmente letras (al menos 70% del texto)
+    const letterCount = (trimmedText.match(/[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]/g) || []).length;
+    const letterPercentage = letterCount / trimmedText.length;
+    
+    if (letterPercentage < 0.7) {
+        return { valid: false, message: "Por favor, escribe solo texto describiendo tus sentimientos y emociones." };
+    }
+    
+    // Verificar que no sea solo números o símbolos matemáticos
+    const mathPattern = /^[\d\+\-\*\/\=\(\)\.\s]+$/;
+    if (mathPattern.test(trimmedText)) {
+        return { valid: false, message: "Por favor, describe tus sentimientos con palabras, no con números o operaciones." };
+    }
+    
+    // Verificar que no sea solo emojis o símbolos
+    const emojiPattern = /^[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\s]*$/u;
+    if (emojiPattern.test(trimmedText)) {
+        return { valid: false, message: "Por favor, usa palabras para describir cómo te sientes en lugar de solo emojis." };
+    }
+    
+    return { valid: true };
+}
+
 // Nueva función que llama a nuestro backend en lugar de directamente a Gemini
 async function getConsolationFromBackend(userInput) {
     try {
@@ -94,6 +126,8 @@ async function getConsolationFromBackend(userInput) {
 
 function renderResults(consolationData) {
     initialReflection.textContent = consolationData.initialReflection;
+    
+    // Limpiar solo las tarjetas de versículos previas, manteniendo el título
     const existingCards = versesContainer.querySelectorAll('.bg-white');
     existingCards.forEach(card => card.remove());
     
@@ -124,6 +158,13 @@ getVerseBtn.addEventListener('click', async () => {
     const userInput = feelingsInput.value.trim();
     if (userInput === '') {
         showError("Por favor, escribe algo sobre cómo te sientes antes de continuar.");
+        return;
+    }
+
+    // Agregar validación de contenido
+    const validation = isValidTextInput(userInput);
+    if (!validation.valid) {
+        showError(validation.message);
         return;
     }
 
