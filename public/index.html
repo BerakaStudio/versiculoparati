@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Versículo para Tí</title>
     <link rel="icon" type="image/png" sizes="32x32" href="favicons.png">
-    
-    <!-- PDF Generation Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="icon" type="image/png" sizes="16x16" href="favicons.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="faviconxl.png">
+    <link rel="icon" type="image/svg+xml" href="vpt-icon.svg">
     
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,7 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="text-gray-800">
 
@@ -27,7 +27,7 @@
         <!-- Main Content -->
         <main class="w-full max-w-3xl mx-auto flex-grow">
             <header class="text-center mb-8">
-                <img src="vpt-logo.svg" alt="Logo Versículo Para Tí" class="mx-auto">
+                <img src="vpt-logo.svg" alt="Logo Versículo Para Tí">
                 <div class="titulo">
                     <h1 class="text-4xl md:text-5xl font-bold text-green-800">Versículo para Tí</h1>
                     <p class="mt-2 text-lg text-gray-600">Encuentra paz y consuelo en la Palabra de Dios</p>
@@ -38,16 +38,21 @@
             <div id="input-section" class="inputsection">
                 <label for="feelings-input" class="input-label">¿Cómo te sientes hoy? Comparte tus pensamientos y emociones:</label>
                 <textarea id="feelings-input" rows="6" class="emotion-textarea" placeholder="Puedes escribir sobre tus alegrías, preocupaciones, miedos o lo que tengas en tu corazón..."></textarea>
-                <button id="get-verse-btn" class="submit-button">
+                <button id="get-verse-btn" class="submit-button ">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-text"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/><path d="M6 8h2"/><path d="M6 12h2"/><path d="M16 8h2"/><path d="M16 12h2"/></svg>
                     <span>Vamos a la Biblia</span>
                 </button>
             </div>
 
             <!-- Loading Section -->
-            <div id="loading-section" class="hidden inputsection py-16 flex-col items-center justify-center">
+            <div id="loading-section" class="hidden bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-gray-200 py-16 flex-col items-center justify-center">
                  <div class="sparkle-container">
-                    <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+                    <div class="sparkle"></div>
+                    <div class="sparkle"></div>
+                    <div class="sparkle"></div>
+                    <div class="sparkle"></div>
+                    <div class="sparkle"></div>
+                    <div class="sparkle"></div>
                 </div>
                 <p id="loading-text" class="mt-4 text-lg text-green-800 font-semibold"></p>
             </div>
@@ -57,28 +62,14 @@
                  <button id="search-again-btn" class="w-full mb-8 py-3 px-6 text-white font-bold text-lg rounded-xl btn-gradient shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 ease-in-out">
                     Hacer una nueva consulta
                 </button>
+                <!-- Initial Reflection Message -->
+                <div id="initial-reflection-container" class="reflection mb-8">
+                    <p id="initial-reflection" class="text-yellow-900 text-lg"></p>
+                </div>
                 
-                <!-- New container for all results -->
-                <div class="inputsection" id="results-content-wrapper">
-                    <!-- Initial Reflection Message -->
-                    <div id="initial-reflection-container" class="reflection mb-6">
-                        <h4 class="reflection-title">Un mensaje para ti:</h4>
-                        <p id="initial-reflection" class="text-yellow-900 text-lg mt-2"></p>
-                    </div>
-
-                    <!-- Verses Title -->
-                    <h3 class="verses-title">Versículos que Dios tiene para tí</h3>
-                    
-                    <!-- Verse Cards -->
-                    <div id="verses-container" class="verse mt-6">
-                        <!-- Verse cards will be injected here by JavaScript -->
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div id="action-buttons" class="mt-8 flex flex-col sm:flex-row gap-4">
-                        <button id="more-verses-btn" class="submit-button secondary-button">Mostrar más versículos</button>
-                        <button id="save-pdf-btn" class="submit-button secondary-button">Guardar versículos en PDF</button>
-                    </div>
+                <!-- Verse Cards -->
+                <div id="verses-container" class="verse">
+                    <!-- Verse cards will be injected here by JavaScript -->
                 </div>
             </div>
             
@@ -87,13 +78,20 @@
                 <strong class="font-bold">¡Oh, no!</strong>
                 <span class="block sm:inline" id="error-text"></span>
             </div>
+
         </main>
 
         <!-- Footer -->
         <footer class="text-center mt-12 py-4 space-y-2">
-            <p class="text-sm text-gray-500">Versículos tomados de la <a href="https://www.bible.com/versions/176-tla-traducci%C3%B3n-en-lenguaje-actual" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline font-semibold">Traducción en Lenguaje Actual (TLA)</a>.</p>
-            <p class="text-sm text-gray-500">Procesamiento de lenguaje elaborado con <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline font-semibold">Google Gemini</a>.</p>
-            <p class="text-sm text-gray-500">Elaborado por <a href="https://beraka.cl/" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline font-semibold">Beraka Studio</a>.</p>
+            <p class="text-sm text-gray-500">
+                Versículos tomados de la <a href="https://www.bible.com/versions/176-tla-traducci%C3%B3n-en-lenguaje-actual" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline font-semibold">Traducción en Lenguaje Actual (TLA)</a>.
+            </p>
+            <p class="text-sm text-gray-500">
+                Procesamiento de lenguaje elaborado con <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline font-semibold">Google Gemini</a>.
+            </p>
+            <p class="text-sm text-gray-500">
+                Elaborado por <a href="https://beraka.cl/" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline font-semibold">Beraka Studio</a>.
+            </p>
         </footer>
     </div>
 

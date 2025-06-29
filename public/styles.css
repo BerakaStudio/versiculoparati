@@ -123,44 +123,14 @@ header p {
     transform: translateY(0);
 }
 
-/* NEW: Secondary button style */
-.secondary-button {
-    background: #fefce8; /* Soft yellow */
-    color: #854d0e; /* Brown */
-    border: 2px solid #fde68a;
-    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.1);
-}
-.secondary-button:hover {
-    background: #fef9c3;
-    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.2);
-}
-.secondary-button.loading {
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
 .reflection {
     background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
     border-radius: 16px;
     padding: 1.5rem;
+    margin-bottom: 2rem;
     border-left: 4px solid #f59e0b;
     box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
 }
-
-/* NEW: Title for reflection */
-.reflection-title {
-    color: #854d0e; /* Brown text */
-    font-weight: 700;
-}
-
-/* NEW: Title for verses */
-.verses-title {
-    color: #166534; /* Darker green */
-    font-weight: 700;
-    text-align: center;
-    font-size: 1.25rem;
-}
-
 .verse {
     display: grid;
     gap: 1.5rem;
