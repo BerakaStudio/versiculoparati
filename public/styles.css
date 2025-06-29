@@ -131,6 +131,13 @@ header p {
     border-left: 4px solid #f59e0b;
     box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
 }
+.reflection-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: rgb(113 63 18 / var(--tw-text-opacity, 1));
+    margin-bottom: 1rem;
+    display: block;
+}
 .verse {
     display: grid;
     gap: 1.5rem;

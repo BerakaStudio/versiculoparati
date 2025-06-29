@@ -94,7 +94,8 @@ async function getConsolationFromBackend(userInput) {
 
 function renderResults(consolationData) {
     initialReflection.textContent = consolationData.initialReflection;
-    versesContainer.innerHTML = '';
+    const existingCards = versesContainer.querySelectorAll('.bg-white');
+    existingCards.forEach(card => card.remove());
     
     consolationData.verses.forEach(verse => {
         const card = document.createElement('div');
