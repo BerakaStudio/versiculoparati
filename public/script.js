@@ -214,6 +214,14 @@ function renderResults(consolationData) {
     const existingCards = versesContainer.querySelectorAll('.bg-white');
     existingCards.forEach(card => card.remove());
     
+    // Si no existe el título, crearlo
+    if (!versesContainer.querySelector('.verses-title')) {
+        const title = document.createElement('h2');
+        title.className = 'verses-title';
+        title.textContent = 'Versículos que Dios tiene para tí';
+        versesContainer.appendChild(title);
+    }
+    
     consolationData.verses.forEach(verse => {
         const card = document.createElement('div');
         card.className = 'bg-white p-5 rounded-2xl shadow-md border border-gray-200 flex items-start space-x-4 animate-fade-in';
