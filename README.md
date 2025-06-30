@@ -39,4 +39,4 @@ Este proyecto está bajo la Licencia MIT - mira el archivo [LICENSE](LICENSE) pa
 
 Beraka Studio - [Sitio web](https://beraka.cl)
 
-© 2025
+©2025
