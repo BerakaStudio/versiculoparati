@@ -92,6 +92,89 @@ function isValidTextInput(text) {
         return { valid: false, message: "Por favor, usa palabras para describir cómo te sientes en lugar de solo emojis." };
     }
     
+    // --- NUEVAS VALIDACIONES ---
+    
+    // Detectar URLs y enlaces (patrones más amplios)
+    const urlPatterns = [
+        /https?:\/\/[^\s]+/gi,                    // http:// o https://
+        /www\.[^\s]+\.[a-z]{2,}/gi,              // www.ejemplo.com
+        /[a-zA-Z0-9-]+\.[a-z]{2,}\/[^\s]*/gi,    // dominio.com/algo
+        /[a-zA-Z0-9-]+\.(com|org|net|edu|gov|mil|int|co|es|mx|ar|cl|pe|ve|bo|py|uy|ec|br)[^\s]*/gi, // dominios comunes
+        /[^\s]+@[^\s]+\.[a-z]{2,}/gi             // emails básicos
+    ];
+    
+    for (let pattern of urlPatterns) {
+        if (pattern.test(trimmedText)) {
+            return { valid: false, message: "Por favor, no incluyas enlaces, URLs o direcciones web. Describe solo tus sentimientos con palabras." };
+        }
+    }
+    
+    // Detectar patrones de código común
+    const codePatterns = [
+        /[{}\[\]]/g,                              // Llaves y corchetes de código
+        /[<>]/g,                                  // Etiquetas HTML/XML
+        /<[^>]+>/g,                              // Etiquetas HTML completas
+        /function\s*\(/gi,                        // Declaraciones de función
+        /var\s+|let\s+|const\s+/gi,              // Declaraciones de variables JS
+        /class\s+[a-zA-Z]/gi,                     // Declaraciones de clase
+        /import\s+|export\s+/gi,                  // Imports/exports
+        /if\s*\(|while\s*\(|for\s*\(/gi,         // Estructuras de control
+        /console\.[a-zA-Z]+\(/gi,                 // Console methods
+        /document\.[a-zA-Z]+/gi,                  // DOM manipulation
+        /\$\([^)]*\)/g,                          // jQuery selectors
+        /[a-zA-Z]+\(\s*\)/g,                     // Llamadas a función vacías
+        /[a-zA-Z_][a-zA-Z0-9_]*\s*[=:]\s*[^,;]+[;,]/g, // Asignaciones de variables
+        /\/\*.*?\*\//gs,                         // Comentarios /* */
+        /\/\/.*$/gm,                             // Comentarios //
+        /^\s*[#]+\s/gm,                          // Headers de markdown
+        /`[^`]*`/g,                              // Backticks (código inline)
+        /```[\s\S]*?```/g,                       // Bloques de código markdown
+        /SELECT\s+|INSERT\s+|UPDATE\s+|DELETE\s+/gi, // SQL básico
+        /\bdef\s+|\bclass\s+|\bimport\s+/gi,     // Python keywords
+        /\#include|void\s+main/gi,                // C/C++ patterns
+        /public\s+static\s+void/gi                // Java patterns
+    ];
+    
+    for (let pattern of codePatterns) {
+        if (pattern.test(trimmedText)) {
+            return { valid: false, message: "Por favor, no incluyas código de programación. Comparte solo tus sentimientos y emociones con palabras naturales." };
+        }
+    }
+    
+    // Detectar patrones sospechosos adicionales
+    const suspiciousPatterns = [
+        /[a-zA-Z0-9]{20,}/g,                     // Cadenas muy largas sin espacios (posibles tokens, hashes, etc.)
+        /[^\w\s\.,;:!?¡¿'"()\-áéíóúüñÁÉÍÓÚÜÑ]/g, // Caracteres especiales no típicos del texto natural
+        /\b[A-Z]{3,}\b/g,                        // Palabras en mayúsculas (posibles códigos)
+        /\d{4,}/g                                // Números de 4+ dígitos (posibles códigos, IDs, etc.)
+    ];
+    
+    // Contar ocurrencias sospechosas
+    let suspiciousCount = 0;
+    for (let pattern of suspiciousPatterns) {
+        const matches = trimmedText.match(pattern);
+        if (matches) {
+            suspiciousCount += matches.length;
+        }
+    }
+    
+    // Si hay muchos patrones sospechosos, rechazar
+    if (suspiciousCount > 3) {
+        return { valid: false, message: "El texto parece contener código o información técnica. Por favor, describe solo tus sentimientos con palabras naturales." };
+    }
+    
+    // Verificar que el texto tenga suficientes palabras comunes del español
+    const commonSpanishWords = /\b(yo|tu|tú|el|la|los|las|un|una|de|del|en|con|por|para|que|es|son|se|me|te|le|nos|os|les|muy|más|pero|como|cuando|donde|dónde|porque|porqué|si|sí|no|también|solo|sólo|algo|nada|todo|todos|todas|bien|mal|mejor|peor|grande|pequeño|nuevo|viejo|bueno|malo|feliz|triste|amor|vida|tiempo|casa|familia|amigo|amigos|trabajo|dinero|problema|problemas|siento|sientes|sienten|estoy|estás|está|estamos|están|tengo|tienes|tiene|tenemos|tienen|quiero|quieres|quiere|queremos|quieren|necesito|necesitas|necesita|necesitamos|necesitan|dios|señor|jesús|cristo|fe|esperanza|paz|oración|bendición)\b/gi;
+    
+    const spanishMatches = trimmedText.match(commonSpanishWords);
+    const spanishWordCount = spanishMatches ? spanishMatches.length : 0;
+    const totalWords = trimmedText.split(/\s+/).filter(word => word.length > 0).length;
+    
+    // Al menos 30% de las palabras deberían ser palabras comunes del español
+    if (totalWords > 5 && spanishWordCount / totalWords < 0.3) {
+        return { valid: false, message: "Por favor, escribe tu mensaje en español natural, describiendo tus sentimientos y emociones." };
+    }
+    
     return { valid: true };
 }
 
