@@ -192,6 +192,13 @@ function generatePDF() {
     const month = today.toLocaleDateString('es-ES', { month: 'long' });
     const year = today.getFullYear();
     const formattedDate = `El ${dayName} ${day} de ${month} de ${year}`;
+    
+    // --- Format date for filename ---
+    const fileDay = String(today.getDate()).padStart(2, '0');
+    const fileMonth = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const fileYear = today.getFullYear();
+    const filenameDate = `${fileDay}-${fileMonth}-${fileYear}`;
+
 
     // --- PDF Content ---
     const margin = 15;
@@ -201,67 +208,86 @@ function generatePDF() {
 
     // 1. Main Title
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(22);
+    doc.setFontSize(20);
     doc.setTextColor(45, 90, 45); // Dark green
     doc.text("Versículo para Tí", pageWidth / 2, currentY + 20, { align: 'center' });
     currentY += 30;
 
     // 2. Introductory text
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
+    doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
     const introText = `${formattedDate} indicaste que sentías '${consolationCache.briefSummary}' y Dios te recuerda lo siguiente:`;
     const splitIntro = doc.splitTextToSize(introText, usableWidth);
     doc.text(splitIntro, margin, currentY);
     currentY += (splitIntro.length * 5) + 10;
 
-    // 3. Initial Reflection
+    // 3. Initial Reflection with rounded corners
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(12);
+    doc.setFontSize(11);
     doc.setTextColor(113, 63, 18); // Dark yellow/brown
     const splitReflection = doc.splitTextToSize(consolationCache.initialReflection, usableWidth - 10);
     
-    const reflectionHeight = (splitReflection.length * 6) + 10;
+    const reflectionHeight = (splitReflection.length * 5.5) + 10;
     doc.setFillColor(254, 243, 199); // Light yellow background
-    doc.rect(margin, currentY, usableWidth, reflectionHeight, 'F');
+    // Draw the rounded rectangle
+    doc.roundedRect(margin, currentY, usableWidth, reflectionHeight, 3, 3, 'F');
     
     doc.text(splitReflection, margin + 5, currentY + 7);
     currentY += reflectionHeight + 15;
 
-    // 4. Verses
+    // 4. Verses with rounded borders
     consolationCache.verses.forEach(verse => {
-        const verseHeightEstimate = doc.splitTextToSize(verse.text, usableWidth).length * 5 + doc.splitTextToSize(verse.reflection, usableWidth).length * 4 + 20;
-        if (currentY + verseHeightEstimate > doc.internal.pageSize.getHeight() - 20) {
+        const textPadding = 5;
+        const usableVerseWidth = usableWidth - (textPadding * 2);
+        
+        // Pre-calculate text heights
+        const splitRef = doc.setFont("helvetica", "bold").setFontSize(12).splitTextToSize(verse.reference, usableVerseWidth);
+        const splitText = doc.setFont("helvetica", "normal").setFontSize(10).splitTextToSize(verse.text, usableVerseWidth);
+        const splitVerseReflection = doc.setFont("helvetica", "italic").setFontSize(9).splitTextToSize(`"${verse.reflection}"`, usableVerseWidth);
+        
+        // Calculate total height for the verse block
+        const verseBlockHeight = (splitRef.length * 5) + (splitText.length * 5) + (splitVerseReflection.length * 4) + 20;
+
+        if (currentY + verseBlockHeight > doc.internal.pageSize.getHeight() - 20) {
             doc.addPage();
             currentY = 20;
         }
+        
+        const startY = currentY;
+
+        // Draw the rounded green border
+        doc.setDrawColor(209, 231, 221); // Light green border
+        doc.setLineWidth(0.5);
+        doc.roundedRect(margin, startY, usableWidth, verseBlockHeight, 3, 3, 'S');
+
+        currentY += 10; // Top padding
 
         // Reference
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
+        doc.setFontSize(12);
         doc.setTextColor(45, 90, 45); // Dark green
-        doc.text(verse.reference, margin, currentY);
-        currentY += 8;
+        doc.text(splitRef, margin + textPadding, currentY);
+        currentY += (splitRef.length * 5) + 4;
 
         // Text
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(11);
+        doc.setFontSize(10);
         doc.setTextColor(55, 65, 81); // Gray
-        const splitText = doc.splitTextToSize(verse.text, usableWidth);
-        doc.text(splitText, margin, currentY);
+        doc.text(splitText, margin + textPadding, currentY);
         currentY += (splitText.length * 5) + 4;
 
         // Reflection
         doc.setFont("helvetica", "italic");
-        doc.setFontSize(10);
+        doc.setFontSize(9);
         doc.setTextColor(180, 83, 9); // Orange/yellow
-        const splitVerseReflection = doc.splitTextToSize(`"${verse.reflection}"`, usableWidth);
-        doc.text(splitVerseReflection, margin, currentY);
-        currentY += (splitVerseReflection.length * 4) + 15; // Extra space after each verse
+        doc.text(splitVerseReflection, margin + textPadding, currentY);
+        
+        currentY = startY + verseBlockHeight + 10; // Move to the start of the next block
     });
 
     // --- Save the PDF ---
-    doc.save('Versiculo-para-Ti.pdf');
+    doc.save(`Versiculo-para-Ti-${filenameDate}.pdf`);
 }
 
 
