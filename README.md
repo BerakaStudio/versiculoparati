@@ -1,5 +1,5 @@
 # Versículo para Tí
-![Version](https://img.shields.io/badge/version-1.0.1-green.svg?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.0.2-green.svg?style=flat-square)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 
 Una aplicación web que proporciona versículos bíblicos personalizados basados en tus sentimientos y emociones del momento.
@@ -10,6 +10,7 @@ Una aplicación web que proporciona versículos bíblicos personalizados basados
 - Respuestas personalizadas usando IA (Google Gemini)
 - Versículos de la Traducción en Lenguaje Actual (TLA)
 - Reflexiones empáticas y consoladoras
+- Generación de PDF con los versículos y reflexiones recibidas
 - Diseño responsive y moderno
 
 ## Demo en Vivo
@@ -22,6 +23,7 @@ Visita la aplicación: [Versículo para tí](https://versiculoparati.vercel.app/
 - **Styling**: Tailwind CSS
 - **Backend**: Vercel Serverless Functions
 - **IA**: Google Gemini API
+- **PDF Generation**: jsPDF
 - **Hosting**: Vercel
 
 ## Seguridad
