@@ -26,6 +26,7 @@ export default async function handler(req, res) {
 
     La estructura del JSON debe ser:
     {
+      "briefSummary": "Un resumen muy breve de 3-5 palabras que capture la esencia de lo que siente el usuario (ej: 'ansiedad y tristeza', 'soledad y miedo', 'agradecimiento y paz')",
       "initialReflection": "Un mensaje reflexivo inicial personalizado, cálido y profundamente empático, de 6-9 frases. Debe reconocer específicamente los sentimientos expresados por el usuario, ofrecer comprensión genuina, y brindar esperanza de manera personal y directa. Evita frases genéricas y conecta directamente con la situación emocional del usuario.",
       "verses": [
         {
@@ -45,6 +46,8 @@ export default async function handler(req, res) {
     }
 
     Por favor, asegúrate de que el array 'verses' contenga exactamente 5 versículos relevantes para los sentimientos del usuario. El tono debe ser siempre de esperanza, comprensión y empatía. El mensaje de reflexión inicial debe ser específico para la situación del usuario, mencionando elementos concretos de lo que compartió, y ofreciendo consuelo personalizado que demuestre que realmente has comprendido su corazón.
+
+    IMPORTANTE: El 'briefSummary' debe ser muy conciso, en español, y capturar la emoción principal en pocas palabras naturales.
     `;
 
     const payload = {
@@ -71,7 +74,7 @@ export default async function handler(req, res) {
       const cleanedJsonString = jsonString.replace(/```json/g, '').replace(/```/g, '').trim();
       const parsedResult = JSON.parse(cleanedJsonString);
       
-      if (!parsedResult.initialReflection || !parsedResult.verses || !Array.isArray(parsedResult.verses) || parsedResult.verses.length === 0) {
+      if (!parsedResult.briefSummary || !parsedResult.initialReflection || !parsedResult.verses || !Array.isArray(parsedResult.verses) || parsedResult.verses.length === 0) {
         throw new Error("La IA no devolvió la estructura JSON esperada.");
       }
       

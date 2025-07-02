@@ -9,8 +9,13 @@ const searchAgainBtn = document.getElementById('search-again-btn');
 const initialReflectionContainer = document.getElementById('initial-reflection-container');
 const initialReflection = document.getElementById('initial-reflection');
 const versesContainer = document.getElementById('verses-container');
+const downloadSection = document.getElementById('download-section');
+const downloadPdfBtn = document.getElementById('download-pdf-btn');
 const errorMessage = document.getElementById('error-message');
 const errorText = document.getElementById('error-text');
+
+// Cache for the latest API response to use in PDF generation
+let consolationCache = null;
 
 const loadingPhrases = [
     "Buscando los versículos apropiados para ti...",
@@ -46,6 +51,7 @@ function hideLoading() {
 
 function showResults() {
     resultsSection.classList.remove('hidden');
+    downloadSection.classList.remove('hidden'); // Show download button
 }
 
 function showError(message) {
@@ -57,10 +63,12 @@ function showError(message) {
 
 function resetUI() {
     resultsSection.classList.add('hidden');
+    downloadSection.classList.add('hidden'); // Hide download button on reset
     errorMessage.classList.add('hidden');
     inputSection.classList.remove('hidden');
     feelingsInput.value = '';
     versesContainer.innerHTML = '';
+    consolationCache = null; // Clear the cache
 }
 
 function isValidTextInput(text) {
@@ -80,112 +88,37 @@ function isValidTextInput(text) {
         return { valid: false, message: "Por favor, escribe solo texto describiendo tus sentimientos y emociones." };
     }
     
-    // Verificar que no sea solo números o símbolos matemáticos
-    const mathPattern = /^[\d\+\-\*\/\=\(\)\.\s]+$/;
-    if (mathPattern.test(trimmedText)) {
-        return { valid: false, message: "Por favor, describe tus sentimientos con palabras, no con números o operaciones." };
-    }
-    
-    // Verificar que no sea solo emojis o símbolos
-    const emojiPattern = /^[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\s]*$/u;
-    if (emojiPattern.test(trimmedText)) {
-        return { valid: false, message: "Por favor, usa palabras para describir cómo te sientes en lugar de solo emojis." };
-    }
-    
-    // --- NUEVAS VALIDACIONES ---
-    
-    // Detectar URLs y enlaces (patrones más amplios)
+    // Detectar URLs y enlaces
     const urlPatterns = [
-        /https?:\/\/[^\s]+/gi,                    // http:// o https://
-        /www\.[^\s]+\.[a-z]{2,}/gi,              // www.ejemplo.com
-        /[a-zA-Z0-9-]+\.[a-z]{2,}\/[^\s]*/gi,    // dominio.com/algo
-        /[a-zA-Z0-9-]+\.(com|org|net|edu|gov|mil|int|co|es|mx|ar|cl|pe|ve|bo|py|uy|ec|br)[^\s]*/gi, // dominios comunes
-        /[^\s]+@[^\s]+\.[a-z]{2,}/gi             // emails básicos
+        /https?:\/\/[^\s]+/gi,
+        /www\.[^\s]+\.[a-z]{2,}/gi,
+        /[a-zA-Z0-9-]+\.[a-z]{2,}\/[^\s]*/gi
     ];
-    
     for (let pattern of urlPatterns) {
         if (pattern.test(trimmedText)) {
-            return { valid: false, message: "Por favor, no incluyas enlaces, URLs o direcciones web. Describe solo tus sentimientos con palabras." };
+            return { valid: false, message: "Por favor, no incluyas enlaces o URLs. Describe solo tus sentimientos." };
         }
     }
     
-    // Detectar patrones de código común
+    // Detectar patrones de código
     const codePatterns = [
-        /[{}\[\]]/g,                              // Llaves y corchetes de código
-        /[<>]/g,                                  // Etiquetas HTML/XML
-        /<[^>]+>/g,                              // Etiquetas HTML completas
-        /function\s*\(/gi,                        // Declaraciones de función
-        /var\s+|let\s+|const\s+/gi,              // Declaraciones de variables JS
-        /class\s+[a-zA-Z]/gi,                     // Declaraciones de clase
-        /import\s+|export\s+/gi,                  // Imports/exports
-        /if\s*\(|while\s*\(|for\s*\(/gi,         // Estructuras de control
-        /console\.[a-zA-Z]+\(/gi,                 // Console methods
-        /document\.[a-zA-Z]+/gi,                  // DOM manipulation
-        /\$\([^)]*\)/g,                          // jQuery selectors
-        /[a-zA-Z]+\(\s*\)/g,                     // Llamadas a función vacías
-        /[a-zA-Z_][a-zA-Z0-9_]*\s*[=:]\s*[^,;]+[;,]/g, // Asignaciones de variables
-        /\/\*.*?\*\//gs,                         // Comentarios /* */
-        /\/\/.*$/gm,                             // Comentarios //
-        /^\s*[#]+\s/gm,                          // Headers de markdown
-        /`[^`]*`/g,                              // Backticks (código inline)
-        /```[\s\S]*?```/g,                       // Bloques de código markdown
-        /SELECT\s+|INSERT\s+|UPDATE\s+|DELETE\s+/gi, // SQL básico
-        /\bdef\s+|\bclass\s+|\bimport\s+/gi,     // Python keywords
-        /\#include|void\s+main/gi,                // C/C++ patterns
-        /public\s+static\s+void/gi                // Java patterns
+        /[{}\[\]<>]/g,
+        /function\s*\(|class\s+[a-zA-Z]/gi
     ];
-    
     for (let pattern of codePatterns) {
         if (pattern.test(trimmedText)) {
-            return { valid: false, message: "Por favor, no incluyas código de programación. Comparte solo tus sentimientos y emociones con palabras naturales." };
+            return { valid: false, message: "Por favor, no incluyas código de programación. Comparte solo tus sentimientos." };
         }
-    }
-    
-    // Detectar patrones sospechosos adicionales
-    const suspiciousPatterns = [
-        /[a-zA-Z0-9]{20,}/g,                     // Cadenas muy largas sin espacios (posibles tokens, hashes, etc.)
-        /[^\w\s\.,;:!?¡¿'"()\-áéíóúüñÁÉÍÓÚÜÑ]/g, // Caracteres especiales no típicos del texto natural
-        /\b[A-Z]{3,}\b/g,                        // Palabras en mayúsculas (posibles códigos)
-        /\d{4,}/g                                // Números de 4+ dígitos (posibles códigos, IDs, etc.)
-    ];
-    
-    // Contar ocurrencias sospechosas
-    let suspiciousCount = 0;
-    for (let pattern of suspiciousPatterns) {
-        const matches = trimmedText.match(pattern);
-        if (matches) {
-            suspiciousCount += matches.length;
-        }
-    }
-    
-    // Si hay muchos patrones sospechosos, rechazar
-    if (suspiciousCount > 3) {
-        return { valid: false, message: "El texto parece contener código o información técnica. Por favor, describe solo tus sentimientos con palabras naturales." };
-    }
-    
-    // Verificar que el texto tenga suficientes palabras comunes del español
-    const commonSpanishWords = /\b(yo|tu|tú|el|la|los|las|un|una|de|del|en|con|por|para|que|es|son|se|me|te|le|nos|os|les|muy|más|pero|como|cuando|donde|dónde|porque|porqué|si|sí|no|también|solo|sólo|algo|nada|todo|todos|todas|bien|mal|mejor|peor|grande|pequeño|nuevo|viejo|bueno|malo|feliz|triste|amor|vida|tiempo|casa|familia|amigo|amigos|trabajo|dinero|problema|problemas|siento|sientes|sienten|estoy|estás|está|estamos|están|tengo|tienes|tiene|tenemos|tienen|quiero|quieres|quiere|queremos|quieren|necesito|necesitas|necesita|necesitamos|necesitan|dios|señor|jesús|cristo|fe|esperanza|paz|oración|bendición)\b/gi;
-    
-    const spanishMatches = trimmedText.match(commonSpanishWords);
-    const spanishWordCount = spanishMatches ? spanishMatches.length : 0;
-    const totalWords = trimmedText.split(/\s+/).filter(word => word.length > 0).length;
-    
-    // Al menos 30% de las palabras deberían ser palabras comunes del español
-    if (totalWords > 5 && spanishWordCount / totalWords < 0.3) {
-        return { valid: false, message: "Por favor, escribe tu mensaje en español natural, describiendo tus sentimientos y emociones." };
     }
     
     return { valid: true };
 }
 
-// Nueva función que llama a nuestro backend en lugar de directamente a Gemini
 async function getConsolationFromBackend(userInput) {
     try {
         const response = await fetch('/api/gemini', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userInput })
         });
 
@@ -210,11 +143,9 @@ async function getConsolationFromBackend(userInput) {
 function renderResults(consolationData) {
     initialReflection.textContent = consolationData.initialReflection;
     
-    // Limpiar solo las tarjetas de versículos previas, manteniendo el título
     const existingCards = versesContainer.querySelectorAll('.bg-white');
     existingCards.forEach(card => card.remove());
     
-    // Si no existe el título, crearlo
     if (!versesContainer.querySelector('.verses-title')) {
         const title = document.createElement('h2');
         title.className = 'verses-title';
@@ -243,7 +174,98 @@ function renderResults(consolationData) {
     showResults();
 }
 
-// --- Main Event Handler ---
+// --- PDF Generation ---
+
+function generatePDF() {
+    if (!consolationCache) {
+        showError("No hay datos para generar el PDF. Por favor, realiza una consulta primero.");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // --- Get and format the date ---
+    const today = new Date();
+    const dayName = today.toLocaleDateString('es-ES', { weekday: 'long' });
+    const day = today.getDate();
+    const month = today.toLocaleDateString('es-ES', { month: 'long' });
+    const year = today.getFullYear();
+    const formattedDate = `El ${dayName} ${day} de ${month} de ${year}`;
+
+    // --- PDF Content ---
+    const margin = 15;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const usableWidth = pageWidth - margin * 2;
+    let currentY = 0;
+
+    // 1. Main Title
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(45, 90, 45); // Dark green
+    doc.text("Versículo para Tí", pageWidth / 2, currentY + 20, { align: 'center' });
+    currentY += 30;
+
+    // 2. Introductory text
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.setTextColor(100, 100, 100);
+    const introText = `${formattedDate} indicaste que sentías '${consolationCache.briefSummary}' y Dios te recuerda lo siguiente:`;
+    const splitIntro = doc.splitTextToSize(introText, usableWidth);
+    doc.text(splitIntro, margin, currentY);
+    currentY += (splitIntro.length * 5) + 10;
+
+    // 3. Initial Reflection
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.setTextColor(113, 63, 18); // Dark yellow/brown
+    const splitReflection = doc.splitTextToSize(consolationCache.initialReflection, usableWidth - 10);
+    
+    const reflectionHeight = (splitReflection.length * 6) + 10;
+    doc.setFillColor(254, 243, 199); // Light yellow background
+    doc.rect(margin, currentY, usableWidth, reflectionHeight, 'F');
+    
+    doc.text(splitReflection, margin + 5, currentY + 7);
+    currentY += reflectionHeight + 15;
+
+    // 4. Verses
+    consolationCache.verses.forEach(verse => {
+        const verseHeightEstimate = doc.splitTextToSize(verse.text, usableWidth).length * 5 + doc.splitTextToSize(verse.reflection, usableWidth).length * 4 + 20;
+        if (currentY + verseHeightEstimate > doc.internal.pageSize.getHeight() - 20) {
+            doc.addPage();
+            currentY = 20;
+        }
+
+        // Reference
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.setTextColor(45, 90, 45); // Dark green
+        doc.text(verse.reference, margin, currentY);
+        currentY += 8;
+
+        // Text
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.setTextColor(55, 65, 81); // Gray
+        const splitText = doc.splitTextToSize(verse.text, usableWidth);
+        doc.text(splitText, margin, currentY);
+        currentY += (splitText.length * 5) + 4;
+
+        // Reflection
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(10);
+        doc.setTextColor(180, 83, 9); // Orange/yellow
+        const splitVerseReflection = doc.splitTextToSize(`"${verse.reflection}"`, usableWidth);
+        doc.text(splitVerseReflection, margin, currentY);
+        currentY += (splitVerseReflection.length * 4) + 15; // Extra space after each verse
+    });
+
+    // --- Save the PDF ---
+    doc.save('Versiculo-para-Ti.pdf');
+}
+
+
+// --- Main Event Handlers ---
 
 getVerseBtn.addEventListener('click', async () => {
     const userInput = feelingsInput.value.trim();
@@ -252,7 +274,6 @@ getVerseBtn.addEventListener('click', async () => {
         return;
     }
 
-    // Agregar validación de contenido
     const validation = isValidTextInput(userInput);
     if (!validation.valid) {
         showError(validation.message);
@@ -263,6 +284,7 @@ getVerseBtn.addEventListener('click', async () => {
 
     try {
         const consolationData = await getConsolationFromBackend(userInput);
+        consolationCache = consolationData; // Cache the data for PDF generation
         console.log("Datos de consolación generados:", consolationData);
 
         if (!consolationData || !consolationData.verses || consolationData.verses.length === 0) {
@@ -278,3 +300,5 @@ getVerseBtn.addEventListener('click', async () => {
 });
 
 searchAgainBtn.addEventListener('click', resetUI);
+
+downloadPdfBtn.addEventListener('click', generatePDF);

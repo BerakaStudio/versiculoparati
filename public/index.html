@@ -9,6 +9,9 @@
     <link rel="apple-touch-icon" sizes="180x180" href="faviconxl.png">
     <link rel="icon" type="image/svg+xml" href="vpt-icon.svg">
     
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -72,6 +75,14 @@
                 <div id="verses-container" class="verse">
                     <h2 class="verses-title">Versículos que Dios tiene para tí</h2>
                     <!-- Verse cards will be injected here by JavaScript -->
+                </div>
+
+                <!-- Download Button Section -->
+                <div id="download-section" class="hidden mt-6 text-center">
+                    <button id="download-pdf-btn" class="download-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-cloud"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m8 17 4 4 4-4"/></svg>
+                        <span>Descargar para mí</span>
+                    </button>
                 </div>
             </div>
             
