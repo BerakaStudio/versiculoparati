@@ -189,7 +189,7 @@ function generatePDF() {
     const today = new Date();
     const dayName = today.toLocaleDateString('es-ES', { weekday: 'long' });
     const day = today.getDate();
-    const month = today.toLocaleDate-String('es-ES', { month: 'long' });
+    const month = today.toLocaleDateString('es-ES', { month: 'long' });
     const year = today.getFullYear();
     const formattedDate = `El ${dayName} ${day} de ${month} de ${year}`;
     
