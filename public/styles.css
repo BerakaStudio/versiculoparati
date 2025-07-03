@@ -1,12 +1,26 @@
 /* Custom styles and animations */
 body {
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #e8f5e8 0%, #f0f8ff 50%, #fff8dc 100%);
+    background: linear-gradient(135deg, #d4efdf 0%, #eaf2f8 50%, #fcf6e2 100%);
+    background-size: 400% 400%;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
+    animation: animate-gradient 20s ease infinite;
+}
+
+@keyframes animate-gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .main-container {
@@ -128,7 +142,6 @@ header p {
     transform: translateY(0);
 }
 
-/* Download Button Style */
 .download-button {
     display: inline-flex;
     justify-content: center;
@@ -152,7 +165,6 @@ header p {
 .download-button:active {
     transform: translateY(0);
 }
-
 
 .reflection {
     background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
@@ -206,7 +218,6 @@ header p {
     padding-top: 0.75rem;
 }
 
-/* Sparkle loading animation */
 .sparkle-container {
     position: relative;
     width: 200px;
@@ -217,7 +228,7 @@ header p {
     position: absolute;
     width: 8px;
     height: 8px;
-    background-color: #fde047; /* yellow-300 */
+    background-color: #fde047;
     border-radius: 50%;
     animation: sparkle-animation 1.5s infinite;
 }
